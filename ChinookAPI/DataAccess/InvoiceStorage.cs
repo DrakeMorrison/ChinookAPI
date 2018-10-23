@@ -28,14 +28,17 @@ namespace ChinookAPI.DataAccess
                     join Customer
 	                    on Customer.CustomerId = Invoice.CustomerId
                     join Employee
-	                    on @EmployeeId = SupportRepId
+	                    on EmployeeId = SupportRepId
+                    where EmployeeId = @agentId
                 ";
 
-                command.Parameters.AddWithValue("@EmployeeId", agentId);
+                command.Parameters.AddWithValue("@agentId", agentId);
 
                 var reader = command.ExecuteReader();
 
-                if (reader.Read())
+                var recheck = reader.Read();
+
+                if (recheck)
                 {
                     var invoice = new Invoice()
                     {
@@ -47,7 +50,6 @@ namespace ChinookAPI.DataAccess
                         BillingCountry = reader["BillingState"].ToString(),
                         BillingPostalCode = reader["BillingPostalCode"].ToString(),
                         Total = (Decimal) reader["Total"]
-
                     };
 
                     return invoice;
