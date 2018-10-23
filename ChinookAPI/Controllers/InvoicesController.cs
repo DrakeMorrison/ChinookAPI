@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using ChinookAPI.DataAccess;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,10 +11,17 @@ namespace ChinookAPI.Controllers
     [ApiController]
     public class InvoicesController : ControllerBase
     {
+        private readonly InvoiceStorage _storage;
+
+        public InvoicesController()
+        {
+            _storage = new InvoiceStorage();
+        }
+
         [HttpGet("{id}")]
         public IActionResult GetByAgentId(int id)
         {
-            throw new NotImplementedException();
+            return Ok(_storage.GetInvoice(id));
         }
     }
 }
