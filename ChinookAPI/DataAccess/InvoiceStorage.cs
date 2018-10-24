@@ -8,10 +8,9 @@ namespace ChinookAPI.DataAccess
 {
     public class InvoiceStorage
     {
-        static List<Invoice> _invoicebox = new List<Invoice>();
         private const string ConnectionString = "Server=(local);Database=Chinook;Trusted_Connection=True;";
 
-        public List<Invoice> GetInvoice(int agentId)
+        public List<Invoice> GetInvoiceByAgent(int agentId)
         {
             using (var connection = new SqlConnection(ConnectionString))
             {
@@ -37,6 +36,8 @@ namespace ChinookAPI.DataAccess
 
                 if (reader.Read())
                 {
+                    var invoiceBox = new List<Invoice>();
+
                     foreach (var item in reader)
                     {
                         var invoice = new Invoice()

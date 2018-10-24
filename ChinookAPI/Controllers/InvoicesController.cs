@@ -19,9 +19,15 @@ namespace ChinookAPI.Controllers
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetByAgentId(int id)
+        public IActionResult GetAllByAgentId(int id)
         {
-            return Ok(_storage.GetInvoice(id));
+            return Ok(_storage.GetInvoiceByAgent(id));
+        }
+
+        [HttpGet]
+        public IActionResult GetInvoiceData()
+        {
+            return Ok(_storage.GetInvoices());
         }
     }
 }
