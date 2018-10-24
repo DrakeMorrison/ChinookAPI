@@ -66,7 +66,6 @@ namespace ChinookAPI.DataAccess
             using (var db = new SqlConnection(ConnectionString))
             {
                 db.Open();
-
                 var command = db.CreateCommand();
 
                 command.CommandText = @"
@@ -102,6 +101,26 @@ namespace ChinookAPI.DataAccess
                     return invoiceInfoBox;
                 }
                 return null;
+            }
+        }
+
+        public int LineItemsPerInvoice(int id)
+        {
+            using (var db = new SqlConnection(ConnectionString))
+            {
+                db.Open();
+                var command = db.CreateCommand();
+
+                command.CommandText = @"
+                    select items_per_invoice = count(*)
+                    from InvoiceLine
+                    where InvoiceId = @id";
+
+                command.Parameters.AddWithValue("@id", id);
+
+                var result = command.ExecuteScalar();
+
+                return (int)result;
             }
         }
     }
