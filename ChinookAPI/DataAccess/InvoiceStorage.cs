@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
-
 namespace ChinookAPI.DataAccess
 {
     public class InvoiceStorage
@@ -12,7 +11,7 @@ namespace ChinookAPI.DataAccess
         static List<Invoice> _invoicebox = new List<Invoice>();
         private const string ConnectionString = "Server=(local);Database=Chinook;Trusted_Connection=True;";
 
-        public Invoice GetInvoice(int agentId)
+        public List<Invoice> GetInvoice(int agentId)
         {
             using (var connection = new SqlConnection(ConnectionString))
             {
@@ -36,25 +35,27 @@ namespace ChinookAPI.DataAccess
 
                 var reader = command.ExecuteReader();
 
-                var recheck = reader.Read();
-
-                if (recheck)
+                if (reader.Read())
                 {
-                    var invoice = new Invoice()
+                    foreach (var item in reader)
                     {
-                        CustomerId = (int) reader["CustomerId"],
-                        InvoiceDate = (DateTime) reader["InvoiceDate"],
-                        BillingAddress = reader["BillingAddress"].ToString(),
-                        BillingCity = reader["BillingCity"].ToString(),
-                        BillingState = reader["BillingAddress"].ToString(),
-                        BillingCountry = reader["BillingState"].ToString(),
-                        BillingPostalCode = reader["BillingPostalCode"].ToString(),
-                        Total = (Decimal) reader["Total"]
-                    };
+                        var invoice = new Invoice()
+                        {
+                            AgentName = reader["agent_name"].ToString(),
+                            CustomerId = (int)reader["CustomerId"],
+                            InvoiceDate = (DateTime)reader["InvoiceDate"],
+                            BillingAddress = reader["BillingAddress"].ToString(),
+                            BillingCity = reader["BillingCity"].ToString(),
+                            BillingState = reader["BillingAddress"].ToString(),
+                            BillingCountry = reader["BillingState"].ToString(),
+                            BillingPostalCode = reader["BillingPostalCode"].ToString(),
+                            Total = (Decimal)reader["Total"]
+                        };
 
-                    return invoice;
+                        _invoicebox.Add(invoice);
+                    }
+                    return _invoicebox;
                 }
-
                 return null;
             }
         }
