@@ -53,9 +53,53 @@ namespace ChinookAPI.DataAccess
                             Total = (Decimal)reader["Total"]
                         };
 
-                        _invoicebox.Add(invoice);
+                        invoiceBox.Add(invoice);
                     }
-                    return _invoicebox;
+                    return invoiceBox;
+                }
+                return null;
+            }
+        }
+
+        public List<InvoiceInfo> GetInvoices()
+        {
+            using (var db = new SqlConnection(ConnectionString))
+            {
+                db.Open();
+
+                var command = db.CreateCommand();
+
+                command.CommandText = @"
+                    select
+	                    agent_name = Employee.FirstName + ' ' + Employee.LastName,
+	                    customer_name = Customer.FirstName + ' ' + Customer.LastName,
+	                    country = customer.Country,
+	                    Total
+                    from Invoice
+                    join Customer
+	                    on Customer.CustomerId = Invoice.CustomerId
+                    join Employee
+	                    on EmployeeId = SupportRepId";
+
+                var reader = command.ExecuteReader();
+
+                if (reader.Read())
+                {
+                    var invoiceInfoBox = new List<InvoiceInfo>();
+
+                    foreach (var item in reader)
+                    {
+                        var invoice = new InvoiceInfo()
+                        {
+                            AgentName = reader["agent_name"].ToString(),
+                            CustomerName = reader["customer_name"].ToString(),
+                            Country = reader["country"].ToString(),
+                            Total = (Decimal)reader["Total"]
+                        };
+
+                        invoiceInfoBox.Add(invoice);
+                    }
+                    return invoiceInfoBox;
                 }
                 return null;
             }
