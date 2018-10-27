@@ -1,4 +1,5 @@
 ﻿using ChinookAPI.Models;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -8,7 +9,12 @@ namespace ChinookAPI.DataAccess
 {
     public class InvoiceStorage
     {
-        private const string ConnectionString = "Server=(local);Database=Chinook;Trusted_Connection=True;";
+        private readonly string ConnectionString;
+
+        public InvoiceStorage(IConfiguration config)
+        {
+            ConnectionString = config.GetSection("ConnectionString").Value;
+        }
 
         public List<Invoice> GetInvoiceByAgent(int agentId)
         {
