@@ -1,4 +1,5 @@
 ﻿using ChinookAPI.Models;
+using Dapper;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
@@ -128,6 +129,48 @@ namespace ChinookAPI.DataAccess
 
                 return (int)result;
             }
+        }
+
+        public bool InsertInvoice(Invoice invoice)
+        {
+            using (var db = new SqlConnection(ConnectionString))
+            {
+                db.Open();
+
+                var newInvoice = new Invoice()
+                {
+                    CustomerId = invoice.CustomerId,
+                    BillingAddress = invoice.BillingAddress,
+                    InvoiceDate = DateTime.Now,
+                    BillingCity = null,
+                    BillingState = null,
+                    BillingCountry = null,
+                    BillingPostalCode = null,
+                    Total = 0,
+                    AgentName = null
+                };
+
+                var result = db.Execute(@"INSERT INTO [dbo].[Invoice]
+           ([CustomerId]
+           ,[InvoiceDate]
+           ,[BillingAddress]
+           ,[BillingCity]
+           ,[BillingState]
+           ,[BillingCountry]
+           ,[BillingPostalCode]
+           ,[Total])
+     VALUES
+            (@customerId,
+            @invoiceDate,
+            @billingAddress,
+            @billingCity,
+            @billingState,
+            @billingCountry,
+            @billingPostalCode,
+            @total)", newInvoice);
+
+                return result == 1;
+            };
         }
     }
 }

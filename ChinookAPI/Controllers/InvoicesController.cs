@@ -1,5 +1,6 @@
 ﻿using ChinookAPI.DataAccess;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,9 +14,9 @@ namespace ChinookAPI.Controllers
     {
         private readonly InvoiceStorage _storage;
 
-        public InvoicesController()
+        public InvoicesController(IConfiguration config)
         {
-            _storage = new InvoiceStorage();
+            _storage = new InvoiceStorage(config);
         }
 
         [HttpGet("{id}")]
