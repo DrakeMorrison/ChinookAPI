@@ -139,15 +139,15 @@ namespace ChinookAPI.DataAccess
 
                 var newInvoice = new Invoice()
                 {
-                    CustomerId = invoice.CustomerId,
-                    BillingAddress = invoice.BillingAddress,
+                    CustomerId = invoice.CustomerId != 0 ? invoice.CustomerId : 0,
+                    BillingAddress = invoice.BillingAddress != null ? invoice.BillingAddress : null,
                     InvoiceDate = DateTime.Now,
-                    BillingCity = null,
-                    BillingState = null,
-                    BillingCountry = null,
-                    BillingPostalCode = null,
-                    Total = 0,
-                    AgentName = null
+                    BillingCity = invoice.BillingCity != null? invoice.BillingCity : null,
+                    BillingState = invoice.BillingState != null ? invoice.BillingState : null,
+                    BillingCountry = invoice.BillingCountry != null ? invoice.BillingCountry : null,
+                    BillingPostalCode = invoice.BillingPostalCode != null ? invoice.BillingPostalCode : null,
+                    Total = invoice.Total != decimal.Zero ? invoice.Total : decimal.Zero,
+                    AgentName = invoice.AgentName != null ? invoice.AgentName : null
                 };
 
                 var result = db.Execute(@"INSERT INTO [dbo].[Invoice]
@@ -171,6 +171,19 @@ namespace ChinookAPI.DataAccess
 
                 return result == 1;
             };
+        }
+
+        public int updateEmployee(Employee employee)
+        {
+            using (var db = new SqlConnection(ConnectionString))
+            {
+                db.Open();
+
+                var newEmployee = new Employee()
+                {
+                    EmployeeId = 
+                };
+            }
         }
     }
 }
