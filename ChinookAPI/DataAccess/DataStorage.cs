@@ -8,11 +8,11 @@ using System.Linq;
 using System.Threading.Tasks;
 namespace ChinookAPI.DataAccess
 {
-    public class InvoiceStorage
+    public class DataStorage
     {
         private readonly string ConnectionString;
 
-        public InvoiceStorage(IConfiguration config)
+        public DataStorage(IConfiguration config)
         {
             ConnectionString = config.GetSection("ConnectionString").Value;
         }
@@ -139,15 +139,15 @@ namespace ChinookAPI.DataAccess
 
                 var newInvoice = new Invoice()
                 {
-                    CustomerId = invoice.CustomerId != 0 ? invoice.CustomerId : 0,
-                    BillingAddress = invoice.BillingAddress != null ? invoice.BillingAddress : null,
+                    CustomerId = invoice.CustomerId,
+                    BillingAddress = invoice.BillingAddress,
                     InvoiceDate = DateTime.Now,
-                    BillingCity = invoice.BillingCity != null? invoice.BillingCity : null,
-                    BillingState = invoice.BillingState != null ? invoice.BillingState : null,
-                    BillingCountry = invoice.BillingCountry != null ? invoice.BillingCountry : null,
-                    BillingPostalCode = invoice.BillingPostalCode != null ? invoice.BillingPostalCode : null,
-                    Total = invoice.Total != decimal.Zero ? invoice.Total : decimal.Zero,
-                    AgentName = invoice.AgentName != null ? invoice.AgentName : null
+                    BillingCity = invoice.BillingCity,
+                    BillingState = invoice.BillingState,
+                    BillingCountry = invoice.BillingCountry,
+                    BillingPostalCode = invoice.BillingPostalCode,
+                    Total = invoice.Total,
+                    AgentName = invoice.AgentName
                 };
 
                 var result = db.Execute(@"INSERT INTO [dbo].[Invoice]
@@ -173,16 +173,47 @@ namespace ChinookAPI.DataAccess
             };
         }
 
-        public int updateEmployee(Employee employee)
+        public Employee GetEmployee(int id)
         {
             using (var db = new SqlConnection(ConnectionString))
             {
                 db.Open();
 
-                var newEmployee = new Employee()
-                {
-                    EmployeeId = 
-                };
+                return db.QueryFirst<Employee>(@"select * from employee where EmployeeId = @id", new { id = id});
+            };
+        }
+
+        public bool updateEmployee(Employee employee)
+        {
+            using (var db = new SqlConnection(ConnectionString))
+            {
+                db.Open();
+
+                var oldEmployee = GetEmployee(employee.EmployeeId);
+
+                var newEmployee = oldEmployee;
+
+                newEmployee.FirstName = employee.FirstName;
+                newEmployee.LastName = employee.LastName;
+
+                var result = db.Execute(@"UPDATE [dbo].[Employee]
+   SET [LastName] = @LastName
+      ,[FirstName] = @FirstName
+      ,[Title] = @Title 
+      ,[ReportsTo] = @ReportsTo
+      ,[BirthDate] = @BirthDate
+      ,[HireDate] = @HireDate
+      ,[Address] = @Address
+      ,[City] = @City
+      ,[State] = @State
+      ,[Country] = @Country
+      ,[PostalCode] = @PostalCode
+      ,[Phone] = @Phone
+      ,[Fax] = @Fax
+      ,[Email] = @Email
+    WHERE [EmployeeId] = @EmployeeId", newEmployee);
+
+                return result == 1;
             }
         }
     }

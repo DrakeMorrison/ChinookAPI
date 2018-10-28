@@ -1,34 +1,30 @@
 ﻿using System;
+using Dapper;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using ChinookAPI.DataAccess;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ChinookAPI.DataAccess;
 using Microsoft.Extensions.Configuration;
+using ChinookAPI.Models;
 
 namespace ChinookAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class InvoiceLineController : ControllerBase
+    public class EmployeeController : ControllerBase
     {
         private readonly DataStorage _storage;
 
-        public InvoiceLineController(IConfiguration config)
+        public EmployeeController (IConfiguration config)
         {
             _storage = new DataStorage(config);
         }
 
-        [HttpGet("{invoiceId}")]
-        public IActionResult ItemPerInvoice(int invoiceId)
+        public IActionResult Update(Employee employee)
         {
-            var value = _storage.LineItemsPerInvoice(invoiceId);
-            if(value == -1)
-            {
-                return BadRequest();
-            }
-            return Ok(value);
+            return Ok(_storage.updateEmployee(employee));
         }
     }
 }

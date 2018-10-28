@@ -14,11 +14,11 @@ namespace ChinookAPI.Controllers
     [ApiController]
     public class NewInvoiceController : ControllerBase
     {
-        private readonly InvoiceStorage _storage;
+        private readonly DataStorage _storage;
 
         public NewInvoiceController(IConfiguration config)
         {
-            _storage = new InvoiceStorage(config);
+            _storage = new DataStorage(config);
         }
 
         [HttpPost]
