@@ -35,47 +35,7 @@ namespace ChinookAPI.DataAccess
                     where EmployeeId = @agentId
                 ", new { agentId = agentId });
 
-                //var command = connection.CreateCommand();
-
-                //command.CommandText = @"
-                //    select
-                //     agent_name = Employee.FirstName + ' ' + Employee.LastName,
-                //     Invoice.*
-                //    from Invoice
-                //    join Customer
-                //     on Customer.CustomerId = Invoice.CustomerId
-                //    join Employee
-                //     on EmployeeId = SupportRepId
-                //    where EmployeeId = @agentId
-                //";
-
-                //command.Parameters.AddWithValue("@agentId", agentId);
-
-                //var reader = command.ExecuteReader();
-
-                //if (reader.Read())
-                //{
-                //    var invoiceBox = new List<Invoice>();
-
-                //    foreach (var item in reader)
-                //    {
-                //        var invoice = new Invoice()
-                //        {
-                //            AgentName = reader["agent_name"].ToString(),
-                //            CustomerId = (int)reader["CustomerId"],
-                //            InvoiceDate = (DateTime)reader["InvoiceDate"],
-                //            BillingAddress = reader["BillingAddress"].ToString(),
-                //            BillingCity = reader["BillingCity"].ToString(),
-                //            BillingState = reader["BillingAddress"].ToString(),
-                //            BillingCountry = reader["BillingState"].ToString(),
-                //            BillingPostalCode = reader["BillingPostalCode"].ToString(),
-                //            Total = (Decimal)reader["Total"]
-                //        };
-
-                //        invoiceBox.Add(invoice);
-                //    }
                 return result.ToList();
-
             }
         }
 
@@ -85,9 +45,8 @@ namespace ChinookAPI.DataAccess
             using (var db = new SqlConnection(ConnectionString))
             {
                 db.Open();
-                var command = db.CreateCommand();
 
-                command.CommandText = @"
+                var result = db.Query<InvoiceInfo>(@"
                     select
 	                    agent_name = Employee.FirstName + ' ' + Employee.LastName,
 	                    customer_name = Customer.FirstName + ' ' + Customer.LastName,
@@ -97,29 +56,33 @@ namespace ChinookAPI.DataAccess
                     join Customer
 	                    on Customer.CustomerId = Invoice.CustomerId
                     join Employee
-	                    on EmployeeId = SupportRepId";
+	                    on EmployeeId = SupportRepId");
 
-                var reader = command.ExecuteReader();
+                //var command = db.CreateCommand();
 
-                if (reader.Read())
-                {
-                    var invoiceInfoBox = new List<InvoiceInfo>();
+                //command.CommandText = ;
 
-                    foreach (var item in reader)
-                    {
-                        var invoice = new InvoiceInfo()
-                        {
-                            AgentName = reader["agent_name"].ToString(),
-                            CustomerName = reader["customer_name"].ToString(),
-                            Country = reader["country"].ToString(),
-                            Total = (Decimal)reader["Total"]
-                        };
+                //var reader = command.ExecuteReader();
 
-                        invoiceInfoBox.Add(invoice);
-                    }
-                    return invoiceInfoBox;
-                }
-                return null;
+                //if (reader.Read())
+                //{
+                //    var invoiceInfoBox = new List<InvoiceInfo>();
+
+                //    foreach (var item in reader)
+                //    {
+                //        var invoice = new InvoiceInfo()
+                //        {
+                //            AgentName = reader["agent_name"].ToString(),
+                //            CustomerName = reader["customer_name"].ToString(),
+                //            Country = reader["country"].ToString(),
+                //            Total = (Decimal)reader["Total"]
+                //        };
+
+                //        invoiceInfoBox.Add(invoice);
+                //    }
+                //    return invoiceInfoBox;
+                //}
+                return result.ToList();
             }
         }
 
