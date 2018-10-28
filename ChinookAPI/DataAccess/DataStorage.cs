@@ -23,9 +23,7 @@ namespace ChinookAPI.DataAccess
             {
                 connection.Open();
 
-                var command = connection.CreateCommand();
-
-                command.CommandText = @"
+                var result = connection.Query<Invoice>(@"
                     select
 	                    agent_name = Employee.FirstName + ' ' + Employee.LastName,
 	                    Invoice.*
@@ -35,38 +33,52 @@ namespace ChinookAPI.DataAccess
                     join Employee
 	                    on EmployeeId = SupportRepId
                     where EmployeeId = @agentId
-                ";
+                ", new { agentId = agentId });
 
-                command.Parameters.AddWithValue("@agentId", agentId);
+                //var command = connection.CreateCommand();
 
-                var reader = command.ExecuteReader();
+                //command.CommandText = @"
+                //    select
+                //     agent_name = Employee.FirstName + ' ' + Employee.LastName,
+                //     Invoice.*
+                //    from Invoice
+                //    join Customer
+                //     on Customer.CustomerId = Invoice.CustomerId
+                //    join Employee
+                //     on EmployeeId = SupportRepId
+                //    where EmployeeId = @agentId
+                //";
 
-                if (reader.Read())
-                {
-                    var invoiceBox = new List<Invoice>();
+                //command.Parameters.AddWithValue("@agentId", agentId);
 
-                    foreach (var item in reader)
-                    {
-                        var invoice = new Invoice()
-                        {
-                            AgentName = reader["agent_name"].ToString(),
-                            CustomerId = (int)reader["CustomerId"],
-                            InvoiceDate = (DateTime)reader["InvoiceDate"],
-                            BillingAddress = reader["BillingAddress"].ToString(),
-                            BillingCity = reader["BillingCity"].ToString(),
-                            BillingState = reader["BillingAddress"].ToString(),
-                            BillingCountry = reader["BillingState"].ToString(),
-                            BillingPostalCode = reader["BillingPostalCode"].ToString(),
-                            Total = (Decimal)reader["Total"]
-                        };
+                //var reader = command.ExecuteReader();
 
-                        invoiceBox.Add(invoice);
-                    }
-                    return invoiceBox;
-                }
-                return null;
+                //if (reader.Read())
+                //{
+                //    var invoiceBox = new List<Invoice>();
+
+                //    foreach (var item in reader)
+                //    {
+                //        var invoice = new Invoice()
+                //        {
+                //            AgentName = reader["agent_name"].ToString(),
+                //            CustomerId = (int)reader["CustomerId"],
+                //            InvoiceDate = (DateTime)reader["InvoiceDate"],
+                //            BillingAddress = reader["BillingAddress"].ToString(),
+                //            BillingCity = reader["BillingCity"].ToString(),
+                //            BillingState = reader["BillingAddress"].ToString(),
+                //            BillingCountry = reader["BillingState"].ToString(),
+                //            BillingPostalCode = reader["BillingPostalCode"].ToString(),
+                //            Total = (Decimal)reader["Total"]
+                //        };
+
+                //        invoiceBox.Add(invoice);
+                //    }
+                return result.ToList();
+
             }
         }
+
 
         public List<InvoiceInfo> GetInvoices()
         {
@@ -179,7 +191,7 @@ namespace ChinookAPI.DataAccess
             {
                 db.Open();
 
-                return db.QueryFirst<Employee>(@"select * from employee where EmployeeId = @id", new { id = id});
+                return db.QueryFirst<Employee>(@"select * from employee where EmployeeId = @id", new { id = id });
             };
         }
 
