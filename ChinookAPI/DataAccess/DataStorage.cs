@@ -58,30 +58,6 @@ namespace ChinookAPI.DataAccess
                     join Employee
 	                    on EmployeeId = SupportRepId");
 
-                //var command = db.CreateCommand();
-
-                //command.CommandText = ;
-
-                //var reader = command.ExecuteReader();
-
-                //if (reader.Read())
-                //{
-                //    var invoiceInfoBox = new List<InvoiceInfo>();
-
-                //    foreach (var item in reader)
-                //    {
-                //        var invoice = new InvoiceInfo()
-                //        {
-                //            AgentName = reader["agent_name"].ToString(),
-                //            CustomerName = reader["customer_name"].ToString(),
-                //            Country = reader["country"].ToString(),
-                //            Total = (Decimal)reader["Total"]
-                //        };
-
-                //        invoiceInfoBox.Add(invoice);
-                //    }
-                //    return invoiceInfoBox;
-                //}
                 return result.ToList();
             }
         }
@@ -91,16 +67,11 @@ namespace ChinookAPI.DataAccess
             using (var db = new SqlConnection(ConnectionString))
             {
                 db.Open();
-                var command = db.CreateCommand();
 
-                command.CommandText = @"
+                var result = db.ExecuteScalar(@"
                     select items_per_invoice = count(*)
                     from InvoiceLine
-                    where InvoiceId = @id";
-
-                command.Parameters.AddWithValue("@id", id);
-
-                var result = command.ExecuteScalar();
+                    where InvoiceId = @id", new { id = id});
 
                 return (int)result;
             }
